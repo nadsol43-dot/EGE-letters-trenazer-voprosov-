@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренажёр вопросов · задание 37 ЕГЭ</title>
+<style>
+  :root{
+    --navy:#1b3a5c; --navy2:#24507d; --ink:#161a1e; --muted:#6b7785;
+    --line:#dbe2ea; --bg:#f5f7fa; --card:#ffffff;
+    --red:#b3251c; --redbg:#fdeeec; --green:#1d6b3f; --greenbg:#eaf5ee;
+    --amber:#9a6a00; --amberbg:#fdf6e3;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:18px 18px 60px}
+  header.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .brand{font-weight:800;color:var(--navy);font-size:15px;letter-spacing:.2px}
+  .brand span{font-weight:500;color:var(--muted)}
+  @media(max-width:720px){ .brand span.sub2{display:none} .brand{font-size:14px} }
+  .spacer{flex:1}
+  .ghost{
+    background:#fff;border:1px solid var(--line);color:var(--navy);
+    padding:7px 12px;border-radius:9px;font-size:13px;cursor:pointer;font-weight:600;
+  }
+  .ghost:hover{border-color:#b9c6d6;background:#fbfcfe}
+
+  /* ---------- стартовый экран ---------- */
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 22px;box-shadow:0 1px 2px rgba(20,40,70,.05)}
+  .hero h1{margin:0 0 6px;font-size:26px;line-height:1.22;color:var(--navy)}
+  .hero p{margin:0 0 12px;color:#3d4956;font-size:15px}
+  .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:16px 0 18px}
+  .how div{background:#f9fbfd;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;color:#3d4956}
+  .how b{display:block;color:var(--navy);font-size:12px;letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
+  .chip{
+    border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;
+    font-size:13.5px;cursor:pointer;color:#33404e;font-weight:600;
+  }
+  .chip small{color:var(--muted);font-weight:600}
+  .chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .chip[aria-pressed="true"] small{color:#c9d8e8}
+  .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  label.sw{display:flex;align-items:center;gap:7px;font-size:13.5px;color:#3d4956;cursor:pointer}
+  .primary{
+    background:var(--navy);color:#fff;border:0;border-radius:11px;padding:12px 22px;
+    font-size:15px;font-weight:700;cursor:pointer;
+  }
+  .primary:hover{background:var(--navy2)}
+  .primary:disabled{opacity:.45;cursor:default}
+  .ghost.dim{color:#8b97a5;border-style:dashed;font-weight:500}
+
+  /* ---------- игра ---------- */
+  #play{display:none}
+  .bar{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .count{font-size:13px;color:var(--muted);font-weight:600;white-space:nowrap}
+  .track{flex:1;height:7px;background:#e4eaf1;border-radius:999px;overflow:hidden;min-width:120px}
+  .track i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2f6ea8,#1b3a5c);transition:width .3s}
+  .score{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap}
+  .score em{font-style:normal;color:var(--muted);font-weight:600}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px 20px;box-shadow:0 1px 3px rgba(20,40,70,.06)}
+  .ctx{font-size:13px;color:var(--muted);margin-bottom:2px}
+  .ctx b{color:var(--navy2);font-weight:700}
+  .task{
+    display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:12.5px;background:#eef3f9;color:#2a4a6b;border-radius:7px;padding:4px 9px;margin:6px 0 18px;
+    word-break:break-word;
+  }
+  .q{
+    font-size:clamp(21px,3.4vw,31px);line-height:1.28;font-weight:700;color:#11161c;
+    margin:0 0 22px;padding:16px 18px;border-left:4px solid var(--navy);background:#f8fafc;border-radius:0 10px 10px 0;
+    word-break:break-word;
+  }
+  .ask{font-size:12px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+  .guesses{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+  @media(max-width:560px){.guesses{grid-template-columns:1fr}}
+  .g{
+    border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:11px 8px;
+    font-size:14.5px;font-weight:700;cursor:pointer;color:#33404e;transition:.12s;
+  }
+  .g:hover{border-color:#a9bacd}
+  .g .k{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:2px}
+  .g.sel[data-v="yes"]{background:var(--greenbg);border-color:#7fb794;color:var(--green)}
+  .g.sel[data-v="warn"]{background:var(--amberbg);border-color:#dcc27a;color:var(--amber)}
+  .g.sel[data-v="no"]{background:var(--redbg);border-color:#dfa09a;color:var(--red)}
+  .g.sel{box-shadow:inset 0 0 0 1px currentColor;filter:brightness(.99)}
+  .hint{font-size:12.5px;color:var(--muted);margin:-6px 0 14px}
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+  /* ---------- результат ---------- */
+  .result{display:none;margin-top:18px;border-top:1px dashed var(--line);padding-top:16px}
+  .verdict{
+    display:inline-flex;align-items:center;gap:9px;border-radius:11px;padding:9px 16px;
+    font-size:16px;font-weight:800;letter-spacing:.2px;margin-bottom:12px;
+  }
+  .verdict.no{background:var(--redbg);color:var(--red);border:1.5px solid #e2aca7}
+  .verdict.warn{background:var(--amberbg);color:var(--amber);border:1.5px solid #e0c889}
+  .verdict.yes{background:var(--greenbg);color:var(--green);border:1.5px solid #9dc9ae}
+  .mark{font-size:13px;font-weight:700;margin-left:6px}
+  .mark.ok{color:var(--green)}
+  .mark.bad{color:var(--red)}
+  .why{font-size:15px;color:#2b3540;margin:0 0 12px}
+  .why b{color:var(--navy)}
+  .epbox{background:#f4f2fb;border:1px solid #d9d2ec;border-radius:11px;padding:12px 14px;margin-bottom:12px;font-size:14px;color:#33304a}
+  .epbox h4{margin:0 0 6px;font-size:13.5px;color:#4a3f7a}
+  .epbox p{margin:0 0 6px}
+  .epbox .fix{color:#2f5d3f}
+  .epbox i{color:#4a3f7a}
+  .killer{font-size:13px;color:var(--muted);margin-top:6px}
+
+  /* ---------- финиш ---------- */
+  #finish{display:none}
+  .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0 20px}
+  .stat div{background:#f9fbfd;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .stat b{display:block;font-size:26px;color:var(--navy);line-height:1.1}
+  .stat span{font-size:12.5px;color:var(--muted)}
+  .misses{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:16px}
+  .misses .list{max-height:440px;overflow:auto}
+  .misses h3{margin:0;padding:12px 16px;background:#f7f9fc;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--navy)}
+  .miss{padding:11px 16px;border-bottom:1px solid #eef2f7;font-size:14px}
+  .miss:last-child{border-bottom:0}
+  .miss .qq{font-weight:700;color:#16202b}
+  .miss .mm{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 7px;border-radius:6px;margin-right:6px;vertical-align:1px}
+  .tag.no{background:var(--redbg);color:var(--red)}
+  .tag.warn{background:var(--amberbg);color:var(--amber)}
+  .tag.yes{background:var(--greenbg);color:var(--green)}
+  .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;background:#eef2f7;border:1px solid #dbe2ea;border-bottom-width:2px;border-radius:5px;padding:1px 5px;color:#435063}
+  footer.foot{margin-top:22px;font-size:12px;color:#8b97a5;text-align:center}
+  @media print{
+    body{background:#fff}
+    .ghost,.primary,.track,.hint,footer.foot,#btnMenu{display:none !important}
+    .card,.hero,.misses{box-shadow:none;border-color:#bbb}
+    .misses .list{max-height:none;overflow:visible}
+    .q{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">Задание 37 · вопросы другу <span class="sub2">— тренажёр-проверялка</span></div>
+    <div class="spacer"></div>
+    <button class="ghost" id="btnMenu" style="display:none">Меню</button>
+  </header>
+
+  <!-- ================= СТАРТ ================= -->
+  <section id="start">
+    <div class="hero">
+      <h1>Примут ли этот вопрос на экзамене?</h1>
+      <p>203 реальных вопроса из работ учеников. Ученик читает вопрос и отвечает <b>вслух</b>,
+         преподаватель нажимает его вариант, затем «Проверить» — и на экране появляется вердикт
+         с объяснением.</p>
+
+      <div class="how">
+        <div><b>Шаг 1</b>Ученик читает вопрос и говорит вслух: принят, рискованно или не принят — и почему.</div>
+        <div><b>Шаг 2</b>Нажмите его вариант, затем «Проверить».</div>
+        <div><b>Шаг 3</b>Вердикт + разбор. Если вердикт опирается на экспертную практику — появится карточка правила ◆.</div>
+      </div>
+
+      <div class="ask">Что тренируем</div>
+      <div class="chips" id="modes">
+        <button class="chip" data-mode="all" aria-pressed="true">Все вопросы <small>203</small></button>
+        <button class="chip" data-mode="no" aria-pressed="false">Только ошибки <small>71</small></button>
+        <button class="chip" data-mode="warn" aria-pressed="false">Только спорные <small>32</small></button>
+        <button class="chip" data-mode="yes" aria-pressed="false">Только принятые <small>100</small></button>
+        <button class="chip" data-mode="ep" aria-pressed="false">Только с правилом ◆ <small>56</small></button>
+        <button class="chip" data-mode="mix20" aria-pressed="false">Быстрый раунд <small>20</small></button>
+      </div>
+
+      <div class="row">
+        <label class="sw"><input type="checkbox" id="shuffle" checked> Перемешать</label>
+        <label class="sw"><input type="checkbox" id="ctxOn" checked> Показывать тему задания</label>
+        <div class="spacer"></div>
+        <button class="primary" id="btnStart">Начать →</button>
+      </div>
+      <p class="hint" style="margin-top:14px">Горячие клавиши: <span class="kbd">1</span> принят · <span class="kbd">2</span> рискованно · <span class="kbd">3</span> не принят · <span class="kbd">Space</span> проверить / дальше.</p>
+    </div>
+  </section>
+
+  <!-- ================= ИГРА ================= -->
+  <section id="play">
+    <div class="bar">
+      <div class="count" id="counter">1 / 203</div>
+      <div class="track"><i id="prog"></i></div>
+      <div class="score" id="score">верно 0 из 0 <em>· серия 0</em></div>
+    </div>
+
+    <div class="card">
+      <div class="ctx" id="ctx"></div>
+      <div class="task" id="task"></div>
+      <div class="q" id="q"></div>
+
+      <div id="guessBlock">
+        <div class="ask">Что сказал ученик?</div>
+        <div class="guesses">
+          <button class="g" data-v="yes">✓ Принят<span class="k">засчитают как вопрос</span></button>
+          <button class="g" data-v="warn">! Рискованно<span class="k">примут с оговоркой</span></button>
+          <button class="g" data-v="no">✗ Не принят<span class="k">аспект не раскроется</span></button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="btnCheck">Проверить</button>
+        <button class="ghost dim" id="btnSkipGuess" title="Просто показать ответ, без оценки ученика">Показать ответ</button>
+      </div>
+
+      <div class="result" id="result">
+        <div class="verdict" id="verdict"></div>
+        <p class="why" id="why"></p>
+        <div class="epbox" id="epbox" style="display:none"></div>
+        <div class="actions">
+          <button class="primary" id="btnNext">Дальше →</button>
+          <span class="hint" style="margin:0">или <span class="kbd">Space</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ФИНИШ ================= -->
+  <section id="finish">
+    <div class="hero">
+      <h1 id="finTitle">Раунд закончен</h1>
+      <p id="finSub"></p>
+      <div class="stat" id="finStat"></div>
+      <div class="misses" id="missBox"></div>
+      <div class="row">
+        <button class="primary" id="btnAgain">Ещё раунд</button>
+        <button class="ghost" id="btnRedo">Разобрать сложные ещё раз</button>
+        <button class="ghost" id="btnMenu2">Выбрать другой набор</button>
+        <button class="ghost" id="btnPrint">Печать / PDF</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">По критериям и методическим рекомендациям ФИПИ 2026 · задание 37 · ◆ — экспертная практика</footer>
+</div>
+
+<script id="data" type="application/json">{"scenarios":[{"title":"A. Друг получил необычный подарок","task":"In your message: ask 3 questions about the present","items":[{"q":"What about your present?","v":"no","c":"Не запрос информации: слишком общо, «What about…» не принимают никогда","ep":null},{"q":"Tell me about your present.","v":"no","c":"Просьба, а не вопрос: нет вопросительной структуры","ep":null},{"q":"I want to know about your present.","v":"no","c":"Утверждение вместо вопроса — аспект не раскрыт","ep":null},{"q":"Do you like presents?","v":"no","c":"Общий вопрос не о конкретном подарке","ep":null},{"q":"Did you like it?","v":"no","c":"Оценочный вопрос «да/нет», информации ноль","ep":"ЭП-4"},{"q":"Was it a book?","v":"no","c":"Угадывание: ответ «нет» ничего не сообщает, тема не развивается","ep":"ЭП-3"},{"q":"Is it big or small?","v":"no","c":"Неинформативно: «большой» — понятие относительное","ep":"ЭП-5"},{"q":"Is it a thing or an animal?","v":"no","c":"Альтернативный вопрос-угадайка вместо запроса информации","ep":"ЭП-3"},{"q":"It was a new phone, wasn't it?","v":"no","c":"Разделительный вопрос: в письме нет интонации, это утверждение с «хвостиком», запроса информации нет","ep":"ЭП-7"},{"q":"How much did it cost?","v":"no","c":"Бестактно: нарушение социокультурных норм","ep":"ЭП-1"},{"q":"Who gave it to you?","v":"no","c":"Ответ уже в письме-стимуле: подарок от родителей","ep":null},{"q":"Did your parents buy it in a shop?","v":"no","c":"Дублирует известное + ответ «да/нет»","ep":null},{"q":"Why is it so unusual?","v":"yes","c":"Требует объяснения, развивает тему","ep":null},{"q":"Is it connected with your hobby?","v":"yes","c":"Конкретная связь с темой, ответ не известен","ep":null},{"q":"What are you going to do with it?","v":"yes","c":"Открывает продолжение темы","ep":null},{"q":"Who chose it?","v":"yes","c":"Конкретный вопрос о подарке","ep":null},{"q":"Why did they choose such a present?","v":"yes","c":"Запрос причины — сильный вопрос","ep":null},{"q":"Have you ever got such presents before?","v":"yes","c":"Опыт, которого нет в стимуле","ep":null},{"q":"How did you feel when you opened it?","v":"yes","c":"Эмоции по теме, ответ неизвестен","ep":null},{"q":"Was it a surprise?","v":"warn","c":"Примут, только если в стимуле не сказано, что подарок неожиданный","ep":null},{"q":"What colour is it?","v":"warn","c":"Формально принят, но аспект «беден» — лучше вопрос о смысле подарка","ep":"ЭП-5"},{"q":"Could you please inform me about the present?","v":"no","c":"Официальный стиль, не для письма другу","ep":"ЭП-6"}]},{"title":"B. Друг выиграл городской конкурс по географии","task":"…I won the city contest in Geography last week. In your message: ask 3 questions about the city contest in Geography","items":[{"q":"What about your Geography contest?","v":"no","c":"Общий характер + ответ фактически уже есть: друг победил","ep":null},{"q":"Do you like Geography?","v":"no","c":"Вопрос об отношении к предмету, а не о конкретном конкурсе","ep":null},{"q":"Was it a school contest?","v":"no","c":"В стимуле сказано: конкурс городской","ep":null},{"q":"Did you fail the contest?","v":"no","c":"В стимуле сказано: друг выиграл","ep":null},{"q":"When was the contest held?","v":"no","c":"В стимуле сказано: на прошлой неделе","ep":null},{"q":"Did you win?","v":"no","c":"Ответ уже дан в письме-стимуле","ep":null},{"q":"You won the city contest, didn't you?","v":"no","c":"Разделительный вопрос вместо запроса: фактически утверждение, ответ известен из стимула","ep":"ЭП-7"},{"q":"Where was the Geography contest held? Was it held in your school?","v":"no","c":"Первый принят, второй дублирует первый","ep":null},{"q":"How many people participated in it?","v":"warn","c":"Примут, если вопрос не первый: иначе «it» ни к чему не отсылает","ep":null},{"q":"Was it difficult?","v":"warn","c":"Верно по теме, но «да/нет» — лучше What was the most difficult task?","ep":"ЭП-4"},{"q":"How long did the contest last?","v":"yes","c":"Конкретная деталь, ответа нет в стимуле","ep":null},{"q":"What was the prize?","v":"yes","c":"Конкретный вопрос по теме","ep":null},{"q":"Who helped you to prepare for it?","v":"yes","c":"Развивает тему подготовки","ep":null},{"q":"What task was the most difficult?","v":"yes","c":"Просит деталь, а не оценку","ep":null},{"q":"Why did you decide to take part in it?","v":"yes","c":"Мотивация, ответа нет в стимуле","ep":null},{"q":"How did you celebrate your victory?","v":"yes","c":"Продолжение сюжета, логично","ep":null},{"q":"Are you going to take part in another contest?","v":"yes","c":"Планы — если о них не сказано в стимуле","ep":null},{"q":"Was your teacher proud of you?","v":"warn","c":"Принят, но почти «да/нет»: лучше What did your teacher say?","ep":"ЭП-4"},{"q":"Why were you awarded the first prize?","v":"warn","c":"Похоже на «объясни, за что дали» — риск бестактности у слабых работ","ep":"ЭП-8"}]},{"title":"C. Друг вернулся из поездки в Лондон","task":"In your message: ask 3 questions about her trip to London","items":[{"q":"What about your trip?","v":"no","c":"Не запрос информации","ep":null},{"q":"How was your trip?","v":"no","c":"Оценочное «как прошло» — это не конкретный вопрос","ep":"ЭП-4"},{"q":"Did you like London?","v":"no","c":"Общее «да/нет» об отношении, а не о поездке","ep":"ЭП-4"},{"q":"When did you go there?","v":"no","c":"Если дата названа в стимуле — не принимается","ep":null},{"q":"Did you go alone or with your family?","v":"yes","c":"Альтернативный вопрос с реальной информацией","ep":null},{"q":"Where did you stay?","v":"yes","c":"Конкретная деталь поездки","ep":null},{"q":"How long did the trip last?","v":"yes","c":"Классический зачётный вопрос","ep":null},{"q":"What impressed you most?","v":"yes","c":"Требует содержательного ответа","ep":null},{"q":"What places would you recommend to visit?","v":"yes","c":"Практический вопрос по теме","ep":null},{"q":"Will you go there again?","v":"yes","c":"Планы, если о них не сказано","ep":null},{"q":"Did you visit the Tower of London?","v":"warn","c":"Принят, но это «да/нет» с догадкой — не развивает тему","ep":"ЭП-3"},{"q":"How much money did you spend?","v":"no","c":"Бестактно: вопрос о деньгах","ep":"ЭП-1"},{"q":"Was the weather good?","v":"warn","c":"Слабо: «да/нет»; лучше What was the weather like?","ep":"ЭП-4"},{"q":"What did you buy as a souvenir?","v":"yes","c":"Конкретная деталь, ответа нет в стимуле","ep":null},{"q":"Did you speak English there?","v":"warn","c":"Принят, но очевиден; лучше How did people react to your English?","ep":"ЭП-5"}]},{"title":"D. Друг прочитал книгу","task":"In your message: ask 3 questions about the book","items":[{"q":"What about the book?","v":"no","c":"Слишком общо","ep":null},{"q":"Do you like reading?","v":"no","c":"Вопрос не о конкретной книге","ep":null},{"q":"Was it interesting?","v":"no","c":"Оценочное «да/нет», нулевая информация","ep":"ЭП-4"},{"q":"Did you cry at the end?","v":"no","c":"Странно-личный вопрос, вне коммуникативной рамки","ep":"ЭП-9"},{"q":"How many pages are there in the book?","v":"no","c":"Эксперты относят такие вопросы к пустым (как и вопрос о цене)","ep":"ЭП-5"},{"q":"What book did you read?","v":"warn","c":"Примут только если название в стимуле не указано","ep":null},{"q":"Who was it written by?","v":"yes","c":"Конкретный вопрос о книге","ep":null},{"q":"What is it about?","v":"yes","c":"Содержание, ответа нет в стимуле","ep":null},{"q":"What are the main characters like?","v":"yes","c":"Просит характеристику, а не «да/нет»","ep":null},{"q":"Why did you choose this book?","v":"yes","c":"Мотив выбора","ep":null},{"q":"Who advised you to read it?","v":"yes","c":"Источник рекомендации — конкретика","ep":null},{"q":"How long did it take you to read it?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"Did you read it in the original?","v":"yes","c":"Языковая деталь, ответа нет в стимуле","ep":null},{"q":"Will you read other books by this author?","v":"yes","c":"Планы по теме","ep":null},{"q":"Is the main character like you?","v":"warn","c":"Принят, но субъективно; лучше What did you learn from the book?","ep":"ЭП-9"},{"q":"Was the film adaptation better?","v":"warn","c":"Уводит в сторону от книги — риск «не о том»","ep":"ЭП-10"}]},{"title":"E. Друг завёл питомца","task":"In your message: ask 3 questions about the pet","items":[{"q":"What about your pet?","v":"no","c":"Не запрос информации","ep":null},{"q":"Do you like animals?","v":"no","c":"Не о конкретном питомце","ep":null},{"q":"Do you feed it?","v":"no","c":"Очевидный вопрос, ответ известен заранее","ep":"ЭП-5"},{"q":"Is it big or small?","v":"no","c":"Неинформативно","ep":"ЭП-5"},{"q":"How much did it cost?","v":"no","c":"Бестактно","ep":"ЭП-1"},{"q":"Does it sleep with you?","v":"no","c":"Слишком личное, вне норм вежливости","ep":"ЭП-9"},{"q":"What is your pet?","v":"warn","c":"Примут, если вид животного не назван в стимуле; лучше What kind of pet is it?","ep":null},{"q":"What is your kitten like?","v":"yes","c":"Характер — идеальный вопрос по теме","ep":null},{"q":"What does it look like?","v":"yes","c":"Внешность, конкретика","ep":null},{"q":"How old is it?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"What can it do?","v":"yes","c":"Умения, интересно и открыто","ep":null},{"q":"Who takes care of it?","v":"yes","c":"Распределение заботы — конкретика","ep":null},{"q":"Why did you choose this name?","v":"yes","c":"Логичное продолжение темы","ep":null},{"q":"Do your parents like it?","v":"yes","c":"Отношения в семье по теме","ep":null},{"q":"Why did you decide to get a pet?","v":"yes","c":"Мотивация","ep":null},{"q":"Is your pet friendly?","v":"warn","c":"Принят, но «да/нет»; лучше What is your pet like?","ep":"ЭП-4"}]},{"title":"F. Друг сдал экзамен","task":"In your message: ask 3 questions about the exam","items":[{"q":"What about your exam?","v":"no","c":"Слишком общо","ep":null},{"q":"Was it difficult?","v":"warn","c":"Верно, но «да/нет» — лучше What was the most difficult part?","ep":"ЭП-4"},{"q":"Did you pass it?","v":"no","c":"Ответ уже в стимуле (или вопрос ни о чём, если результат не назван)","ep":null},{"q":"Do you like exams?","v":"no","c":"Пустой вопрос не по коммуникативной задаче","ep":"ЭП-5"},{"q":"How many exams did you pass?","v":"no","c":"Если в стимуле речь об одном экзамене — «не о том»","ep":null},{"q":"What will you do if you fail it?","v":"warn","c":"Принят, если экзамен ещё не сдан; при сданном — нелогичен","ep":null},{"q":"How long did it last?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"What was the most difficult part?","v":"yes","c":"Просит содержательный ответ","ep":null},{"q":"How did you prepare for it?","v":"yes","c":"Классический зачётный вопрос","ep":null},{"q":"What mark did you get?","v":"warn","c":"Примут, если оценка не названа в стимуле","ep":null},{"q":"Which subject are you going to take next year?","v":"yes","c":"Планы по теме","ep":null},{"q":"Who helped you to prepare?","v":"yes","c":"Конкретика","ep":null},{"q":"Were your parents nervous?","v":"yes","c":"Семейный контекст, ответа нет","ep":null},{"q":"Are you happy with your result?","v":"warn","c":"Принят, но «да/нет»; лучше How did you feel when you saw the result?","ep":"ЭП-4"}]},{"title":"G. Друг готовит праздник для мамы","task":"In your message: ask 3 questions about her mum's birthday party","items":[{"q":"What about the party?","v":"no","c":"Не запрос информации","ep":null},{"q":"What is your mum's name?","v":"no","c":"Не о празднике; к теме не относится","ep":null},{"q":"How old is your mum?","v":"no","c":"Вопрос о возрасте женщины — нарушение норм вежливости","ep":"ЭП-2"},{"q":"Does your mum like her birthday?","v":"no","c":"Не о конкретном празднике, «да/нет»","ep":null},{"q":"Does your mum like flowers?","v":"warn","c":"Принят, но не о празднике; лучше What present are you going to give her?","ep":"ЭП-10"},{"q":"Where will the party take place?","v":"yes","c":"Конкретика по теме","ep":null},{"q":"How many guests will you invite?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"What present will you give her?","v":"yes","c":"Точно в тему","ep":null},{"q":"Will you cook anything special?","v":"yes","c":"Деталь подготовки","ep":null},{"q":"Why will you celebrate it at home?","v":"yes","c":"Запрос причины","ep":null},{"q":"What is the dress code?","v":"yes","c":"Планирование мероприятия","ep":null},{"q":"Did you invite your granny?","v":"yes","c":"Конкретная деталь, если о ней не сказано","ep":null},{"q":"Will you decorate the flat?","v":"yes","c":"Подготовка к празднику","ep":null},{"q":"Is she happy?","v":"no","c":"«Да/нет» и не о празднике","ep":"ЭП-4"}]},{"title":"H. Друг начал ходить в спортивный клуб","task":"In your message: ask 3 questions about the sports club","items":[{"q":"What about your club?","v":"no","c":"Слишком общо","ep":null},{"q":"Do you like sport?","v":"no","c":"Не о конкретном клубе","ep":null},{"q":"Is it difficult?","v":"warn","c":"«Да/нет»; лучше What is the most difficult thing about it?","ep":"ЭП-4"},{"q":"How much do you pay for it?","v":"no","c":"Вопрос о деньгах — нарушение норм","ep":"ЭП-1"},{"q":"What kind of sport do you do?","v":"warn","c":"Примут только если вид спорта в стимуле не назван","ep":null},{"q":"How often do you go to the club?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"Where is the club located?","v":"yes","c":"Классический вопрос по теме","ep":null},{"q":"How many people train in your group?","v":"yes","c":"Конкретика","ep":null},{"q":"How long are the lessons?","v":"yes","c":"Продолжительность — конкретный вопрос","ep":null},{"q":"What is your coach like?","v":"yes","c":"Характеристика человека вместо «да/нет»","ep":null},{"q":"Have you made new friends there?","v":"yes","c":"Социальная сторона темы","ep":null},{"q":"How often do you have competitions?","v":"yes","c":"Расширяет тему","ep":null},{"q":"Are you going to take part in competitions?","v":"yes","c":"Планы","ep":null}]},{"title":"I. Друг купил новый гаджет","task":"In your message: ask 3 questions about the gadget","items":[{"q":"What about your new phone?","v":"no","c":"Не запрос информации","ep":null},{"q":"Do you like your phone?","v":"no","c":"Оценочное «да/нет»","ep":null},{"q":"How much did it cost?","v":"no","c":"Вопрос о цене — бестактно","ep":"ЭП-1"},{"q":"Did your parents pay for it?","v":"no","c":"Личный финансовый вопрос, вне норм","ep":"ЭП-1"},{"q":"Is it good?","v":"no","c":"Пустой оценочный вопрос","ep":"ЭП-4"},{"q":"What colour is it?","v":"warn","c":"Примут, но слабо: характеристика без содержания","ep":"ЭП-5"},{"q":"What can it do?","v":"yes","c":"Функции — содержательный вопрос","ep":null},{"q":"Why did you choose this model?","v":"yes","c":"Мотив выбора","ep":null},{"q":"How long have you had it?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"What do you use it for most?","v":"yes","c":"Практика использования","ep":null},{"q":"Did you have to save up for it?","v":"warn","c":"Граница бестактности — лучше How did you get it?","ep":"ЭП-1"}]},{"title":"J. Друг устроился на летнюю работу","task":"In your message: ask 3 questions about his summer job","items":[{"q":"What about your job?","v":"no","c":"Слишком общо","ep":null},{"q":"Do you like your job?","v":"no","c":"Оценочное, не о конкретной работе","ep":"ЭП-4"},{"q":"How much do you earn?","v":"no","c":"Вопрос о деньгах — нарушение норм вежливости","ep":"ЭП-1"},{"q":"Is it hard?","v":"warn","c":"«Да/нет», лучше What are your duties?","ep":"ЭП-4"},{"q":"Where do you work?","v":"warn","c":"Примут только если место не названо в стимуле","ep":null},{"q":"What are your working hours?","v":"yes","c":"Конкретика","ep":null},{"q":"What are your duties?","v":"yes","c":"Содержание работы","ep":null},{"q":"How did you find this job?","v":"yes","c":"Конкретный вопрос","ep":null},{"q":"Who do you work with?","v":"yes","c":"Коллектив по теме","ep":null},{"q":"Are you going to keep this job next summer?","v":"yes","c":"Планы","ep":null},{"q":"How long have you been working there?","v":"yes","c":"Длительность","ep":null}]},{"title":"K. Друг переехал в новый дом / город","task":"In your message: ask 3 questions about his new house","items":[{"q":"What about your new house?","v":"no","c":"Не запрос информации","ep":null},{"q":"Is it big?","v":"no","c":"Неинформативно: «большой» относительно","ep":"ЭП-5"},{"q":"Do you like it?","v":"no","c":"Оценочное «да/нет»","ep":"ЭП-4"},{"q":"When did you move?","v":"warn","c":"Примут только если дата не названа в стимуле","ep":null},{"q":"Where is it located?","v":"yes","c":"Конкретика","ep":null},{"q":"How many rooms are there?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"Do you have your own room?","v":"yes","c":"Личная деталь по теме","ep":null},{"q":"How long did it take you to unpack?","v":"yes","c":"Интересная конкретика","ep":null},{"q":"Have you made new friends there?","v":"yes","c":"Социальная сторона переезда","ep":null},{"q":"Is it far from your school?","v":"yes","c":"Практическая деталь","ep":null}]},{"title":"L. Друг стал волонтёром","task":"In your message: ask 3 questions about volunteering","items":[{"q":"What about volunteering?","v":"no","c":"Не запрос информации","ep":null},{"q":"Is volunteering good?","v":"no","c":"Риторично-оценочный вопрос","ep":"ЭП-4"},{"q":"Do you get money for it?","v":"no","c":"Бестактно по отношению к волонтёрству","ep":"ЭП-1"},{"q":"Is it difficult?","v":"warn","c":"«Да/нет»; лучше What is the most difficult part of it?","ep":"ЭП-4"},{"q":"Why did you decide to become a volunteer?","v":"yes","c":"Мотивация","ep":null},{"q":"What do you do there?","v":"yes","c":"Содержание деятельности","ep":null},{"q":"How often do you work?","v":"yes","c":"Регулярность","ep":null},{"q":"Who do you help?","v":"yes","c":"Конкретика, если не сказано в стимуле","ep":null},{"q":"How did you find this project?","v":"yes","c":"Источник, ответа нет","ep":null},{"q":"Will you continue next year?","v":"yes","c":"Планы","ep":null}]},{"title":"M. Друг пишет про брата (главная ловушка)","task":"Друг: …my brother took part in a tennis tournament… Задание: ask 3 questions about his brother","items":[{"q":"Did your brother win the tournament?","v":"no","c":"Вопрос о турнире, а задание — про брата; плюс ответ уже в стимуле","ep":null},{"q":"Where was the tournament held?","v":"no","c":"Тема вопросов — брат, а не турнир","ep":null},{"q":"How much did his racket cost?","v":"no","c":"Не о брате и вопрос о деньгах","ep":"ЭП-1"},{"q":"Does your brother like tennis?","v":"warn","c":"Про брата, но «да/нет»; лучше How long has he been playing tennis?","ep":"ЭП-4"},{"q":"Did you go to the tournament with him?","v":"warn","c":"Смешивает брата и турнир — риск «не о том»","ep":null},{"q":"How old is your brother?","v":"yes","c":"Конкретный вопрос про брата","ep":null},{"q":"What is your brother like?","v":"yes","c":"Характер — образцовый вопрос","ep":null},{"q":"What does your brother look like?","v":"yes","c":"Внешность","ep":null},{"q":"What is he interested in?","v":"yes","c":"Увлечения брата — это про него","ep":null},{"q":"Do you get along well with your brother?","v":"yes","c":"Отношения — по теме","ep":null},{"q":"How long has your brother been playing tennis?","v":"yes","c":"Увлечение брата, а не сам турнир","ep":null}]},{"title":"N. Друг готовит школьный спектакль","task":"In your message: ask 3 questions about the performance","items":[{"q":"What about the performance?","v":"no","c":"Не запрос информации","ep":null},{"q":"Do you like acting?","v":"no","c":"Не о конкретном спектакле","ep":null},{"q":"Are you nervous?","v":"warn","c":"«Да/нет»; лучше Why are you nervous?","ep":"ЭП-4"},{"q":"When will it take place?","v":"yes","c":"Конкретика","ep":null},{"q":"What is your role?","v":"yes","c":"Точно в тему","ep":null},{"q":"How long will it last?","v":"yes","c":"Продолжительность","ep":null},{"q":"How long have you been rehearsing?","v":"yes","c":"Процесс подготовки","ep":null},{"q":"Will your parents come?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"What will you wear?","v":"yes","c":"Костюм — деталь постановки","ep":null},{"q":"Is the plot interesting?","v":"warn","c":"Оценочное; лучше What is the performance about?","ep":"ЭП-4"}]},{"title":"O. Друг начал онлайн-курс","task":"In your message: ask 3 questions about the course","items":[{"q":"What about the course?","v":"no","c":"Слишком общо","ep":null},{"q":"Is it interesting?","v":"no","c":"Оценочное «да/нет»","ep":"ЭП-4"},{"q":"How much does it cost?","v":"no","c":"Вопрос о деньгах","ep":"ЭП-1"},{"q":"Is it difficult?","v":"warn","c":"«Да/нет»; лучше What is the most difficult part?","ep":"ЭП-4"},{"q":"How many lessons are there in the course?","v":"yes","c":"Конкретная деталь","ep":null},{"q":"How long does the course last?","v":"yes","c":"Длительность","ep":null},{"q":"Who is your teacher?","v":"yes","c":"Конкретный вопрос","ep":null},{"q":"What is your teacher like?","v":"yes","c":"Характеристика","ep":null},{"q":"Why did you decide to take this course?","v":"yes","c":"Мотивация","ep":null},{"q":"Do you have any tests?","v":"yes","c":"Формат контроля","ep":null},{"q":"How do you combine it with school?","v":"yes","c":"Практический аспект","ep":null}]}],"ep":{"ЭП-1":{"title":"Деньги под запретом","text":"Вопросы о цене, зарплате, тратах, «кто заплатил» читаются как бестактность. Формально это вопрос по теме, но эксперт фиксирует нарушение социокультурных норм и аспект не засчитывает.","fix":"Спрашивать о процессе, а не о сумме: <i>How did you manage to buy it? · Was it difficult to choose?</i>"},"ЭП-2":{"title":"Возраст и интимное","text":"Вопрос о возрасте женщины, о том, спит ли питомец в кровати, о личных привычках — вне норм вежливости для письма зарубежному другу. Эксперт отмечает нарушение норм вежливости, а не «не ту тему».","fix":"<i>How old is your brother?</i> — можно; <i>How old is your mum?</i> — нельзя."},"ЭП-3":{"title":"Вопрос-угадайка","text":"Was it a book? · Is it a thing or an animal? · Did you visit the Tower of London? — ученик подбирает вариант вместо запроса информации. Ответ «нет» не даёт никакой новой информации, и аспект считают неразвёрнутым.","fix":"Спрашивать открыто: <i>What is it? · Where did you go? · What impressed you most?</i>"},"ЭП-4":{"title":"Оценочное «да/нет»","text":"Did you like it? · Was it difficult? · Is it interesting? — формально это вопрос, но информации в нём ноль. Эксперт мысленно ставит «неполно»: при других погрешностях аспект уже не спасёт.","fix":"<i>What was it like? · What was the most difficult part? · What impressed you most?</i>"},"ЭП-5":{"title":"Неинформативный вопрос","text":"How many pages are there in the book? · What colour is it? · Is it big or small? · Do you feed it? — эксперты относят такие вопросы к «пустым»: ответ ничего не добавляет к раскрытию темы.","fix":"Деталь, которая говорит о содержании: <i>What is the book about? · What can it do?</i>"},"ЭП-6":{"title":"Официальный стиль вместо дружеского","text":"Could you please inform me about… — грамматически безупречно, но это язык деловой переписки. Стилистический сбой личного письма.","fix":"<i>I’d like to know … · By the way, …</i>"},"ЭП-7":{"title":"Утверждение под видом вопроса","text":"You won, didn’t you? · You went to the sea? — в письме нет интонации. Без вопросительного порядка слов и без «?» эксперт не видит запроса информации, даже если тема угадана.","fix":"<i>Did you win? · Where did you go?</i> — с нормальным порядком слов."},"ЭП-8":{"title":"Бестактный подтекст","text":"Why were you awarded the first prize? · Did you fail the contest? · What will you do if you fail? — читается как сомнение в успехе друга. Аспект либо не засчитывают, либо снижают за нормы вежливости.","fix":"<i>How did you prepare for it? · What helped you to win?</i>"},"ЭП-9":{"title":"Слишком личное","text":"Does it sleep with you? · Did you cry at the end? · Is the main character like you? — за рамками дружеской переписки в формате экзамена: эксперт видит нарушение социокультурных норм.","fix":"Держаться темы и нейтрально-дружеского тона: <i>How do you take care of it? · What did you learn from the book?</i>"},"ЭП-10":{"title":"Вопрос «рядом с темой», а не о теме","text":"Was the film adaptation better? (задание — о книге) · Does your mum like flowers? (задание — о празднике) · Did you go to the tournament with him? (задание — о брате). Формально связано, фактически — другой объект.","fix":"Сверять объект вопроса со словами после <i>about</i> дословно."}},"killer":[["What about your …?","не запрос информации: слишком общий характер; ФИПИ прямо указывает, что такие вопросы неуместны"],["How was it? / How is it going?","оценочная формула без конкретного объекта — аспект не раскрыт"],["Did you like it?","оценочное «да/нет», информации ноль"],["Tell me everything about …","просьба, а не вопрос"],["I want to know about …","утверждение вместо вопроса"],["You won, didn’t you?","разделительный вопрос: фактически утверждение, запроса информации нет"],["You went to the sea?","в письме нет интонации — без вопросительного порядка слов это не вопрос"],["Why? / When? / What kind?","не развёрнут: непонятно, к чему относится"],["Really? / What else?","реакция, а не запрос информации"],["Isn’t it great?","риторический вопрос — стилистическая ошибка"],["How much does/did it cost?","бестактно: нарушение социокультурных норм"],["I’d like to know where was it?","косвенная речь с прямым порядком слов — грамматическая ошибка, вопрос не засчитан"],["how long did it last (без «?» и с маленькой буквы)","оформление: вопрос без «?» могут не принять, плюс орфографическая ошибка"]]}</script>
+<script>
+(function(){
+  "use strict";
+  var DATA = JSON.parse(document.getElementById('data').textContent);
+  var EP = DATA.ep;
+
+  // плоский список карточек
+  var ALL = [];
+  DATA.scenarios.forEach(function(s, si){
+    s.items.forEach(function(it, ii){
+      ALL.push({q:it.q, v:it.v, c:it.c, ep:it.ep, sc:s.title, task:s.task, si:si, ii:ii,
+                id:si+'-'+ii});
+    });
+  });
+
+  var LABEL = {no:'✗ НЕ ПРИНЯТ', warn:'! РИСКОВАННО', yes:'✓ ПРИНЯТ'};
+  var LABEL_SHORT = {no:'не принят', warn:'рискованно', yes:'принят'};
+
+  // счётчики для стартовых чипов — из данных, а не из вёрстки
+  (function(){
+    var cnt = {all:ALL.length, no:0, warn:0, yes:0, ep:0};
+    ALL.forEach(function(c){ cnt[c.v]++; if(c.ep) cnt.ep++; });
+    document.querySelectorAll('#modes .chip').forEach(function(b){
+      var m = b.dataset.mode;
+      if(m === 'mix20') b.querySelector('small').textContent = '20';
+      else b.querySelector('small').textContent = cnt[m];
+    });
+  })();
+
+  var el = function(id){ return document.getElementById(id); };
+  var state = null;
+
+  function build(mode, shuffle){
+    var pool = ALL.slice();
+    if(mode === 'no' || mode === 'warn' || mode === 'yes') pool = pool.filter(function(c){ return c.v === mode; });
+    if(mode === 'ep') pool = pool.filter(function(c){ return c.ep; });
+    if(shuffle){
+      for(var i = pool.length - 1; i > 0; i--){
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+      }
+    }
+    if(mode === 'mix20'){
+      // быстрый раунд: по одному-двум вопросам из каждой темы, поровну вердиктов
+      var byVerdict = {no:[], warn:[], yes:[]};
+      pool.forEach(function(c){ (byVerdict[c.v] || byVerdict.yes).push(c); });
+      var picked = [], quota = {no:0, warn:0, yes:0};
+      Object.keys(byVerdict).forEach(function(k){
+        var n = Math.max(1, Math.round(20 * byVerdict[k].length / pool.length));
+        quota[k] = n;
+      });
+      Object.keys(byVerdict).forEach(function(k){
+        var arr = byVerdict[k].slice();
+        for(var i = arr.length - 1; i > 0; i--){ var j = Math.floor(Math.random()*(i+1)); var t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
+        picked = picked.concat(arr.slice(0, quota[k]));
+      });
+      for(var i = picked.length - 1; i > 0; i--){ var j = Math.floor(Math.random()*(i+1)); var t=picked[i]; picked[i]=picked[j]; picked[j]=t; }
+      pool = picked.slice(0, 20);
+    }
+    return pool;
+  }
+
+  function start(mode, shuffle){
+    var pool = build(mode, shuffle);
+    if(!pool.length){ alert('В этом наборе нет карточек.'); return; }
+    state = {
+      mode: mode, pool: pool, i: 0, revealed: false, pick: null,
+      total: pool.length, answered: 0, tried: 0, correct: 0, streak: 0, best: 0,
+      misses: [], byVerdict: {no:{n:0,ok:0}, warn:{n:0,ok:0}, yes:{n:0,ok:0}}
+    };
+    el('start').style.display = 'none';
+    el('finish').style.display = 'none';
+    el('play').style.display = 'block';
+    el('btnMenu').style.display = 'inline-block';
+    render();
+  }
+
+  function render(){
+    var c = state.pool[state.i];
+    state.revealed = false; state.pick = null;
+    el('result').style.display = 'none';
+    el('guessBlock').style.display = 'block';
+    el('btnCheck').style.display = 'inline-block';
+    el('btnCheck').disabled = true;
+    el('btnSkipGuess').style.display = 'inline-block';
+    document.querySelectorAll('.g').forEach(function(b){ b.classList.remove('sel'); });
+
+    var showCtx = el('ctxOn').checked;
+    el('ctx').innerHTML = showCtx ? ('Ситуация · <b>' + esc(c.sc.replace(/^[A-Z]\.\s*/, '')) + '</b>') : '';
+    el('task').textContent = showCtx ? c.task : '';
+    el('task').style.display = showCtx ? 'inline-block' : 'none';
+    el('q').textContent = c.q;
+
+    el('counter').textContent = (state.i + 1) + ' / ' + state.total;
+    el('prog').style.width = (100 * state.i / state.total) + '%';
+    updateScore();
+  }
+
+  function updateScore(){
+    var s = el('score');
+    if(!state.tried){
+      s.innerHTML = 'верно 0 из 0 <em>· серия ' + state.streak + '</em>';
+    } else {
+      var pct = Math.round(100 * state.correct / state.tried);
+      s.innerHTML = 'верно ' + state.correct + ' из ' + state.tried + ' <em>(' + pct + '%) · серия ' + state.streak + '</em>';
+    }
+  }
+
+  function esc(t){
+    return String(t).replace(/[&<>"]/g, function(m){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];
+    });
+  }
+
+  function pick(v){
+    if(state.revealed) return;
+    state.pick = v;
+    document.querySelectorAll('.g').forEach(function(b){
+      b.classList.toggle('sel', b.dataset.v === v);
+    });
+    el('btnCheck').disabled = false;
+  }
+
+  function reveal(withPick){
+    if(state.revealed) return;
+    var c = state.pool[state.i];
+    state.revealed = true;
+    el('guessBlock').style.display = 'none';
+    el('btnCheck').style.display = 'none';
+    el('btnSkipGuess').style.display = 'none';
+
+    var box = el('verdict');
+    box.className = 'verdict ' + c.v;
+    var mark = '';
+    if(withPick && state.pick){
+      state.tried++;
+      state.byVerdict[c.v].n++;
+      var ok = (state.pick === c.v);
+      if(ok){
+        state.correct++; state.streak++;
+        if(state.streak > state.best) state.best = state.streak;
+        state.byVerdict[c.v].ok++;
+        mark = '<span class="mark ok">верно</span>';
+      } else {
+        state.streak = 0;
+        mark = '<span class="mark bad">мимо: сказал «' + LABEL_SHORT[state.pick] + '»</span>';
+        state.misses.push({c:c, pick:state.pick});
+      }
+    }
+    box.innerHTML = LABEL[c.v] + mark;
+    el('why').innerHTML = '<b>Почему:</b> ' + esc(c.c);
+
+    var ep = el('epbox');
+    if(c.ep && EP[c.ep]){
+      var r = EP[c.ep];
+      ep.style.display = 'block';
+      ep.innerHTML = '<h4>◆ ' + c.ep + ' · ' + esc(r.title) + '</h4>' +
+                     '<p>' + r.text + '</p>' +
+                     '<p class="fix"><b>Как надо:</b> ' + r.fix + '</p>';
+    } else {
+      ep.style.display = 'none';
+    }
+
+    el('result').style.display = 'block';
+    updateScore();
+    el('btnNext').textContent = (state.i + 1 >= state.total) ? 'Итоги →' : 'Дальше →';
+    el('btnNext').focus();
+  }
+
+  function next(){
+    if(!state.revealed){ return; }
+    state.answered++;
+    if(state.i + 1 >= state.total){ finish(); return; }
+    state.i++;
+    render();
+  }
+
+  function finish(){
+    el('play').style.display = 'none';
+    el('btnMenu').style.display = 'none';
+    el('finish').style.display = 'block';
+    var s = state;
+    var pct = s.tried ? Math.round(100 * s.correct / s.tried) : 0;
+    el('finTitle').textContent = s.tried ?
+        (pct >= 85 ? 'Отлично: ' + pct + '%' : (pct >= 60 ? 'Неплохо: ' + pct + '%' : 'Нужно повторить: ' + pct + '%'))
+      : 'Раунд закончен';
+    el('finSub').textContent = 'Просмотрено карточек: ' + s.total +
+      (s.tried ? ' · с оценкой ученика: ' + s.tried + ' · совпало с вердиктом: ' + s.correct +
+                 ' · лучшая серия: ' + s.best : ' · без оценки (режим «просто показать ответ»)');
+
+    var st = '';
+    var names = {no:'✗ Ошибки', warn:'! Спорные', yes:'✓ Принятые'};
+    ['no','warn','yes'].forEach(function(k){
+      var b = s.byVerdict[k];
+      if(!b.n) return;
+      st += '<div><b>' + Math.round(100*b.ok/b.n) + '%</b><span>' + names[k] + ' · ' + b.ok + ' из ' + b.n + '</span></div>';
+    });
+    if(!st) st = '<div><b>' + s.total + '</b><span>карточек просмотрено</span></div>';
+    el('finStat').innerHTML = st;
+
+    var mb = el('missBox');
+    if(!s.misses.length){
+      mb.innerHTML = '<h3>Расхождений нет</h3><div class="list"><div class="miss">Каждый вердикт ученика совпал с оценкой эксперта.</div></div>';
+    } else {
+      var h = '<h3>Где разошлись (' + s.misses.length + ') — печатайте, чтобы разобрать на уроке</h3><div class="list">';
+      s.misses.forEach(function(m){
+        h += '<div class="miss"><div class="qq">' + esc(m.c.q) + '</div>' +
+             '<div class="mm"><span class="tag ' + m.c.v + '">' + LABEL[m.c.v].replace(/^[✗!✓]\s*/, '') + '</span>' +
+             'сказал «' + LABEL_SHORT[m.pick] + '» · ' + esc(m.c.c) + '</div></div>';
+      });
+      mb.innerHTML = h + '</div>';
+    }
+  }
+
+  // ---------- события ----------
+  document.querySelectorAll('#modes .chip').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#modes .chip').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true');
+    });
+  });
+  function currentMode(){
+    var b = document.querySelector('#modes .chip[aria-pressed="true"]');
+    return b ? b.dataset.mode : 'all';
+  }
+  el('btnStart').addEventListener('click', function(){ start(currentMode(), el('shuffle').checked); });
+  document.querySelectorAll('.g').forEach(function(b){
+    b.addEventListener('click', function(){ pick(b.dataset.v); });
+  });
+  el('btnCheck').addEventListener('click', function(){ reveal(true); });
+  el('btnSkipGuess').addEventListener('click', function(){ reveal(false); });
+  el('btnNext').addEventListener('click', next);
+  el('btnPrint').addEventListener('click', function(){ window.print(); });
+  el('btnAgain').addEventListener('click', function(){ start(currentMode(), el('shuffle').checked); });
+  el('btnRedo').addEventListener('click', function(){
+    // повтор только тех карточек, где ученик разошёлся с экспертом
+    var pool = (state.misses || []).map(function(m){ return m.c; });
+    if(!pool.length){ alert('Расхождений не было — разбирать нечего.'); return; }
+    var s2 = {mode: currentMode(), pool: pool, i: 0, revealed: false, pick: null,
+              total: pool.length, answered: 0, tried: 0, correct: 0, streak: 0, best: 0,
+              misses: [], byVerdict: {no:{n:0,ok:0}, warn:{n:0,ok:0}, yes:{n:0,ok:0}}};
+    state = s2;
+    el('start').style.display = 'none'; el('finish').style.display = 'none';
+    el('play').style.display = 'block'; el('btnMenu').style.display = 'inline-block';
+    render();
+  });
+  el('btnMenu').addEventListener('click', function(){
+    el('play').style.display = 'none'; el('finish').style.display = 'none';
+    el('start').style.display = 'block'; el('btnMenu').style.display = 'none';
+  });
+  el('btnMenu2').addEventListener('click', function(){
+    el('play').style.display = 'none'; el('finish').style.display = 'none';
+    el('start').style.display = 'block'; el('btnMenu').style.display = 'none';
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(!state || el('play').style.display === 'none') return;
+    if(e.key === '1'){ if(!state.revealed) pick('yes'); }
+    else if(e.key === '2'){ if(!state.revealed) pick('warn'); }
+    else if(e.key === '3'){ if(!state.revealed) pick('no'); }
+    else if(e.key === ' ' || e.key === 'Enter'){
+      e.preventDefault();
+      if(!state.revealed){ if(state.pick) reveal(true); }
+      else next();
+    }
+  });
+
+  window.__trenazher = {start:start, get state(){ return state; }, all:ALL, ep:EP};
+})();
+</script>
+</body>
+</html>
